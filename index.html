@@ -1,94 +1,146 @@
-```html
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>棋魂 - Get Over</title>
+    <title>棋魂 - 永远的神之一手</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            margin: 0;
-            padding: 0;
+            font-family: 'Noto Serif SC', serif;
+            color: #fff;
+            overflow: hidden;
             height: 100vh;
-            background-image: url('https://images4.alphacoders.com/244/244866.jpg'); /* 棋魂动画图片作为背景 */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            background: #000;
+        }
+        
+        .background {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), 
+                        url('https://images.alphacoders.com/756/756799.jpg') center/cover no-repeat;
+            z-index: -2;
+        }
+        
+        .go-board-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(transparent 50%, rgba(255,255,255,0.03) 50%),
+                        linear-gradient(90deg, transparent 50%, rgba(255,255,255,0.03) 50%);
+            background-size: 40px 40px;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: white;
-            font-family: 'Arial', sans-serif;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-        }
-
-        #title {
-            font-size: 3em;
             text-align: center;
-            margin-bottom: 20px;
         }
+        
+        h1 { font-size: 4.8rem; text-shadow: 0 0 30px #ffd700; letter-spacing: 10px; }
+        .subtitle { font-size: 1.9rem; margin: 15px 0 40px; opacity: 0.9; }
 
-        #player {
-            display: none; /* 隐藏视频，只播放音频 */
+        /* 背景音乐播放器 */
+        .bg-music {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            border: 2px solid #ffd700;
+            border-radius: 50px;
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+            box-shadow: 0 0 25px rgba(255,215,0,0.6);
         }
-
-        #playButton {
-            padding: 10px 20px;
-            font-size: 1.5em;
-            background-color: rgba(255, 255, 255, 0.3);
-            border: 2px solid white;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+        
+        .music-info {
+            color: #ffd700;
+            font-size: 1rem;
+            white-space: nowrap;
         }
-
-        #playButton:hover {
-            background-color: rgba(255, 255, 255, 0.5);
-        }
+        
+        audio { display: none; } /* 隐藏默认控件 */
     </style>
-    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-    <div id="title">棋魂 - Get Over</div>
-    <div id="player"></div>
-    <button id="playButton">播放 / 暂停</button>
+    <div class="background"></div>
+    <div class="go-board-overlay"></div>
+
+    <div class="container">
+        <h1>棋魂</h1>
+        <p class="subtitle">ヒカルの碁</p>
+    </div>
+
+    <!-- 背景音乐 -->
+    <div class="bg-music">
+        <span class="music-info">♪ Dream - Get Over ♪</span>
+        <audio id="bgm" loop preload="auto">
+            <!-- 公开可用的棋魂主题曲直链（可替换成你自己上传的） -->
+            <source src="https://cdn.jsdelivr.net/gh/nekoweb/ost@master/hikaru-no-go/get-over.mp3" type="audio/mpeg">
+            您的浏览器不支持音频播放。
+        </audio>
+        
+        <button id="playBtn" style="background:#ffd700; color:#000; border:none; padding:8px 20px; border-radius:30px; cursor:pointer; font-weight:bold;">
+            ▶ 播放音乐
+        </button>
+    </div>
 
     <script>
-        var player;
-        var isPlaying = false;
+        const audio = document.getElementById('bgm');
+        const playBtn = document.getElementById('playBtn');
 
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '0',
-                width: '0',
-                videoId: 'rr_dBeopDRU',
-                playerVars: {
-                    'autoplay': 0,
-                    'loop': 1,
-                    'playlist': 'rr_dBeopDRU'
-                },
-                events: {
-                    'onReady': onPlayerReady
-                }
+        // 尝试自动播放
+        function tryAutoplay() {
+            audio.volume = 0.6;  // 设置音量 60%
+            audio.play().then(() => {
+                playBtn.textContent = '❚❚ 暂停';
+            }).catch(() => {
+                // 浏览器阻止自动播放，等待用户交互
+                console.log('自动播放被浏览器阻止，等待用户点击');
             });
         }
 
-        function onPlayerReady(event) {
-            document.getElementById('playButton').addEventListener('click', function() {
-                if (isPlaying) {
-                    player.pauseVideo();
-                    isPlaying = false;
-                } else {
-                    player.playVideo();
-                    isPlaying = true;
-                }
-            });
-        }
+        // 页面加载后尝试自动播放
+        window.addEventListener('load', () => {
+            tryAutoplay();
+        });
+
+        // 点击任意位置也可以触发播放（强烈推荐）
+        document.body.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playBtn.textContent = '❚❚ 暂停';
+            }
+        }, { once: true }); // 只触发一次
+
+        // 播放/暂停按钮
+        playBtn.addEventListener('click', (e) => {
+            e.stopImmediatePropagation();
+            if (audio.paused) {
+                audio.play();
+                playBtn.textContent = '❚❚ 暂停';
+            } else {
+                audio.pause();
+                playBtn.textContent = '▶ 播放音乐';
+            }
+        });
+
+        console.log('%c棋魂背景音乐已加载 ✨', 'color:#ffd700; font-size:16px;');
     </script>
 </body>
 </html>
-```
-
-这个网页代码在之前的版本基础上添加了一个播放/暂停按钮，用于控制音乐《Get Over》的播放。使用YouTube IFrame Player API实现控制功能。背景仍为棋魂动画图片。复制代码到HTML文件并在浏览器中打开，即可查看效果。注意：由于浏览器策略，首次播放可能需要用户交互。

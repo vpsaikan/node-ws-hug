@@ -3,144 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>棋魂 - 永远的神之一手</title>
+    <title>李白 · 侠客行</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&amp;display=swap');
         
         body {
             font-family: 'Noto Serif SC', serif;
-            color: #fff;
-            overflow: hidden;
-            height: 100vh;
-            background: #000;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                        url('https://picsum.photos/id/1015/1920/1080') center/cover no-repeat fixed;
+            color: #f5e8c7;
+            overflow-x: hidden;
         }
         
-        .background {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), 
-                        url('https://images.alphacoders.com/756/756799.jpg') center/cover no-repeat;
-            z-index: -2;
+        .poem-container {
+            background: rgba(20, 20, 30, 0.85);
+            border: 2px solid #b8860b;
+            box-shadow: 0 0 30px rgba(184, 134, 11, 0.5);
         }
         
-        .go-board-overlay {
+        .character-bg {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(transparent 50%, rgba(255,255,255,0.03) 50%),
-                        linear-gradient(90deg, transparent 50%, rgba(255,255,255,0.03) 50%);
-            background-size: 40px 40px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
             z-index: -1;
-            opacity: 0.6;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            opacity: 0.15;
+            overflow: hidden;
         }
         
-        h1 { font-size: 4.8rem; text-shadow: 0 0 30px #ffd700; letter-spacing: 10px; }
-        .subtitle { font-size: 1.9rem; margin: 15px 0 40px; opacity: 0.9; }
-
-        /* 背景音乐播放器 */
-        .bg-music {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.85);
-            border: 2px solid #ffd700;
-            border-radius: 50px;
-            padding: 12px 30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            z-index: 100;
-            box-shadow: 0 0 25px rgba(255,215,0,0.6);
-        }
-        
-        .music-info {
+        .floating-char {
+            position: absolute;
+            font-size: 2.5rem;
             color: #ffd700;
-            font-size: 1rem;
-            white-space: nowrap;
+            text-shadow: 0 0 10px #ffd700;
+            animation: float 25s linear infinite;
+            user-select: none;
         }
         
-        audio { display: none; } /* 隐藏默认控件 */
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+        
+        .title {
+            text-shadow: 0 0 20px #b8860b,
+                         0 0 40px #ffd700;
+        }
+        
+        .poem-line {
+            transition: all 0.3s ease;
+        }
+        
+        .poem-line:hover {
+            color: #ffd700;
+            transform: scale(1.02);
+        }
     </style>
 </head>
-<body>
-    <div class="background"></div>
-    <div class="go-board-overlay"></div>
-
-    <div class="container">
-        <h1>棋魂</h1>
-        <p class="subtitle">ヒカルの碁</p>
-    </div>
-
-    <!-- 背景音乐 -->
-    <div class="bg-music">
-        <span class="music-info">♪ Dream - Get Over ♪</span>
-        <audio id="bgm" loop preload="auto">
-            <!-- 公开可用的棋魂主题曲直链（可替换成你自己上传的） -->
-            <source src="https://cdn.jsdelivr.net/gh/nekoweb/ost@master/hikaru-no-go/get-over.mp3" type="audio/mpeg">
-            您的浏览器不支持音频播放。
-        </audio>
+<body class="min-h-screen flex items-center justify-center p-8">
+    <div class="character-bg" id="char-bg"></div>
+    
+    <div class="max-w-3xl mx-auto poem-container rounded-2xl p-12 backdrop-blur-md">
+        <div class="text-center mb-12">
+            <h1 class="title text-6xl font-bold tracking-widest mb-2 text-amber-300">侠客行</h1>
+            <p class="text-xl text-amber-200">李白</p>
+        </div>
         
-        <button id="playBtn" style="background:#ffd700; color:#000; border:none; padding:8px 20px; border-radius:30px; cursor:pointer; font-weight:bold;">
-            ▶ 播放音乐
-        </button>
+        <div class="space-y-6 text-lg leading-relaxed text-center" id="poem">
+            <!-- Poem lines will be populated by JS -->
+        </div>
+        
+        <div class="mt-16 pt-8 border-t border-amber-700 text-center text-sm opacity-75">
+            <p>十步杀一人，千里不留行。</p>
+            <p class="mt-6 text-amber-400 italic">"事了拂衣去，深藏身与名。"</p>
+        </div>
     </div>
 
     <script>
-        const audio = document.getElementById('bgm');
-        const playBtn = document.getElementById('playBtn');
-
-        // 尝试自动播放
-        function tryAutoplay() {
-            audio.volume = 0.6;  // 设置音量 60%
-            audio.play().then(() => {
-                playBtn.textContent = '❚❚ 暂停';
-            }).catch(() => {
-                // 浏览器阻止自动播放，等待用户交互
-                console.log('自动播放被浏览器阻止，等待用户点击');
-            });
+        // Poem content
+        const poem = [
+            "赵客缦胡缨，吴钩霜雪明。",
+            "银鞍照白马，飒沓如流星。",
+            "十步杀一人，千里不留行。",
+            "事了拂衣去，深藏身与名。",
+            "闲过信陵饮，脱剑膝前横。",
+            "将炙啖朱亥，持觞劝侯嬴。",
+            "三杯吐然诺，五岳倒为轻。",
+            "眼花耳热后，意气素霓生。",
+            "救赵挥金锤，邯郸先震惊。",
+            "千秋二壮士，烜赫大梁城。",
+            "纵死侠骨香，不惭世上英。",
+            "谁能书阁下，白首太玄经。"
+        ];
+        
+        // Populate poem
+        const poemContainer = document.getElementById('poem');
+        poem.forEach(line => {
+            const div = document.createElement('div');
+            div.className = 'poem-line text-2xl py-1';
+            div.textContent = line;
+            poemContainer.appendChild(div);
+        });
+        
+        // Generate floating Chinese characters for background
+        function createFloatingChars() {
+            const chars = ['侠', '剑', '客', '马', '酒', '赵', '吴', '银', '霜', '杀', '行', '名', '英', '壮', '骨', '香'];
+            const bg = document.getElementById('char-bg');
+            
+            for (let i = 0; i < 35; i++) {
+                const char = document.createElement('div');
+                char.className = 'floating-char';
+                char.textContent = chars[Math.floor(Math.random() * chars.length)];
+                
+                // Random positioning and animation delay
+                char.style.left = Math.random() * 100 + 'vw';
+                char.style.animationDuration = (20 + Math.random() * 25) + 's';
+                char.style.animationDelay = '-' + Math.random() * 30 + 's';
+                char.style.opacity = 0.3 + Math.random() * 0.6;
+                char.style.fontSize = (1.8 + Math.random() * 2.2) + 'rem';
+                
+                bg.appendChild(char);
+            }
         }
-
-        // 页面加载后尝试自动播放
-        window.addEventListener('load', () => {
-            tryAutoplay();
+        
+        // Initialize floating characters
+        createFloatingChars();
+        
+        // Add some subtle interactivity
+        document.addEventListener('mousemove', (e) => {
+            const chars = document.querySelectorAll('.floating-char');
+            chars.forEach((char, index) => {
+                const speed = (index % 5) * 0.02 + 0.01;
+                const x = (e.clientX - window.innerWidth / 2) * speed;
+                const y = (e.clientY - window.innerHeight / 2) * speed;
+                char.style.transform = `translate(${x}px, ${y}px)`;
+            });
         });
-
-        // 点击任意位置也可以触发播放（强烈推荐）
-        document.body.addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play();
-                playBtn.textContent = '❚❚ 暂停';
-            }
-        }, { once: true }); // 只触发一次
-
-        // 播放/暂停按钮
-        playBtn.addEventListener('click', (e) => {
-            e.stopImmediatePropagation();
-            if (audio.paused) {
-                audio.play();
-                playBtn.textContent = '❚❚ 暂停';
-            } else {
-                audio.pause();
-                playBtn.textContent = '▶ 播放音乐';
-            }
-        });
-
-        console.log('%c棋魂背景音乐已加载 ✨', 'color:#ffd700; font-size:16px;');
     </script>
 </body>
 </html>
